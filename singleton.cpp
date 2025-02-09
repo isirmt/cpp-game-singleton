@@ -54,11 +54,13 @@ int main() {
 }
 
 void ThreadFunc1() {
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     Singleton& singleton = Singleton::GetInstance(3);
     std::cout << singleton.GetValue() << std::endl;
 }
 
 void ThreadFunc2() {
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     Singleton& singleton = Singleton::GetInstance(7);
     std::cout << singleton.GetValue() << std::endl;
 }

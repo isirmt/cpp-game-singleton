@@ -17,7 +17,7 @@ class Component {
 
 class GameObject {
    private:
-    std::unordered_map<std::type_index, std::shared_ptr<Component>> components;
+    std::unordered_map<std::type_index, std::shared_ptr<Component>> components_;
 
    public:
     std::string name;
@@ -26,25 +26,25 @@ class GameObject {
 
     template <typename T, typename... Args>
     void AddComponent(Args&&... args) {
-        components[typeid(T)] =
+        components_[typeid(T)] =
             std::make_shared<T>(std::forward<Args>(args)...);
     }
 
     template <typename T>
     T* GetComponent() {
-        auto it = components.find(typeid(T));
-        return (it != components.end()) ? dynamic_cast<T*>(it->second.get())
+        auto it = components_.find(typeid(T));
+        return (it != components_.end()) ? dynamic_cast<T*>(it->second.get())
                                         : nullptr;
     }
 
     void Update() {
-        for (auto& [type, component] : components) {
+        for (auto& [type, component] : components_) {
             component->Update(*this);
         }
     }
 
     void Render() {
-        for (auto& [type, component] : components) {
+        for (auto& [type, component] : components_) {
             component->Render(*this);
         }
     }
