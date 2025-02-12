@@ -92,11 +92,6 @@ class RendererComponent : public Component {
 
 class SingletonApplication {
    private:
-    static std::unique_ptr<SingletonApplication> pinstace_;
-    static std::mutex mutex_;
-
-    /* ゲーム用記述 */
-
     bool running;
     std::vector<std::shared_ptr<GameObject>> objects;
 
@@ -110,16 +105,10 @@ class SingletonApplication {
     SingletonApplication& operator=(const SingletonApplication&) = delete;
 
     static SingletonApplication& GetInstance() {
-        std::lock_guard<std::mutex> lock(mutex_);
-        if (!pinstace_) {
-            pinstace_ = std::unique_ptr<SingletonApplication>(
-                new SingletonApplication());
-        }
+        static SingletonApplication instance;
 
-        return *pinstace_;
+        return instance;
     }
-
-    /* ゲーム用記述 */
 
     void AddObject(std::shared_ptr<GameObject> obj) { objects.push_back(obj); }
 
@@ -146,9 +135,6 @@ class SingletonApplication {
 
     void Stop() { running = false; }
 };
-
-std::unique_ptr<SingletonApplication> SingletonApplication::pinstace_ = nullptr;
-std::mutex SingletonApplication::mutex_;
 
 int main() {
     SingletonApplication& app = SingletonApplication::GetInstance();

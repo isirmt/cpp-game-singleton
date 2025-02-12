@@ -170,9 +170,6 @@ class GameScene : public Scene {
 
 class SingletonApplication {
    private:
-    static std::unique_ptr<SingletonApplication> pinstace_;
-    static std::once_flag initFlag_;
-
     bool running;
     bool requestedReseting;
     std::shared_ptr<Scene> currentScene_;
@@ -187,17 +184,8 @@ class SingletonApplication {
     SingletonApplication& operator=(const SingletonApplication&) = delete;
 
     static SingletonApplication& GetInstance() {
-        std::call_once(initFlag_, []() {
-            pinstace_ = std::unique_ptr<SingletonApplication>(
-                new SingletonApplication());
-        });
-
-        if (!pinstace_) {
-            pinstace_ = std::unique_ptr<SingletonApplication>(
-                new SingletonApplication());
-        }
-
-        return *pinstace_;
+        static SingletonApplication instance;
+        return instance;
     }
 
     void ChangeScene(std::shared_ptr<Scene> newScene) {
@@ -235,9 +223,6 @@ class SingletonApplication {
 
     void Stop() { running = false; }
 };
-
-std::unique_ptr<SingletonApplication> SingletonApplication::pinstace_ = nullptr;
-std::once_flag SingletonApplication::initFlag_;
 
 class PChangeComponent : public Component {
    public:

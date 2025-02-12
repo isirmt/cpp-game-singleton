@@ -1,13 +1,8 @@
 #include <iostream>
 #include <memory>
-#include <mutex>
 #include <thread>
 
 class Singleton {
-   private:
-    static std::unique_ptr<Singleton> pinstance_;
-    static std::mutex mutex_;
-
    protected:
     Singleton(const int value) : value_(value) {}
 
@@ -22,22 +17,13 @@ class Singleton {
     void operator=(const Singleton&) = delete;
 
     static Singleton& GetInstance(const int& value = 1) {
-        // 排他制御を実現する
-        std::lock_guard<std::mutex> lock(mutex_);
+        static Singleton instance(value);
 
-        if (!pinstance_) {
-            pinstance_ = std::unique_ptr<Singleton>(new Singleton(value));
-        }
-
-        return *pinstance_;
+        return instance;
     }
 
     int GetValue() const { return value_; }
 };
-
-// 静的メンバの宣言
-std::unique_ptr<Singleton> Singleton::pinstance_ = nullptr;
-std::mutex Singleton::mutex_;
 
 // プロトタイプ
 void ThreadFunc1();
